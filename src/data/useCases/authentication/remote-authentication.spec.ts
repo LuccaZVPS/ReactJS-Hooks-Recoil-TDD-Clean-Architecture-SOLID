@@ -1,16 +1,11 @@
 import { RemoteAuthentication } from "./remote-authentication";
-
+import { HttpPostClientSpy } from "../../test/mock-http-client";
 describe("RemoteAuthentication", () => {
   test("Should call HttpClient with correct url", async () => {
-    class HttpPostClient implements HttpPostClient {
-      async post(url: string) {
-        return Promise.resolve();
-      }
-    }
     const url = "any_url";
-    const httpPostClient = new HttpPostClient();
-    const spy = jest.spyOn(httpPostClient, "post");
-    const sut = new RemoteAuthentication(url, httpPostClient);
+    const httpPostClientSpy = new HttpPostClientSpy();
+    const spy = jest.spyOn(httpPostClientSpy, "post");
+    const sut = new RemoteAuthentication(url, httpPostClientSpy);
     await sut.auth({ email: "any_email", password: "any_password" });
     expect(sut.url).toBe(url);
     expect(spy).toHaveBeenCalledWith(url);
